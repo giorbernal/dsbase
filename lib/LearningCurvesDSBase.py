@@ -4,10 +4,11 @@ import numpy as np
 
 # BaseModel. Reference for every model
 class BaseModel:
-    def __init__(self, id, data, parameters):
+    def __init__(self, id, X, y, test_perc, parameters):
         self.id=id
-        self.data=data
-        print("initiating model " + str(self.id) + ". DO NOTHING. Just information: " + str(data.shape));
+        self.X=X
+        self.y=y
+        print("initiating model " + str(self.id) + ". DO NOTHING. Just information: " + str(X.shape));
         
     def train(self):
         print("training model " + str(self.id) + ". DO NOTHING. Just information");
@@ -37,15 +38,17 @@ def basicModelParamsToMap(param1,param2,param3,param4):
     return params
 
 # Learning Curves Model
-class LCModel:
-    def __init__(self, data, percentiles, model=BaseModel, parameters={}):
-        print("data size:" + str(data.shape))
-        
+class LearningCurvesDSBaseWrapper:
+    def __init__(self, X, y, percentiles, model=BaseModel, test_perc=30, parameters={}):
+        print("X size:" + str(X.shape))
+        print("y size:" + str(y.shape))
+
         self.models = []
-        len=data.shape[0]
+        len=X.shape[0]
         i = 0
         for p in percentiles:
-            m=model(i,data[0:int(len*p/100),:], parameters)
+            index=int(len*p/100)
+            m=model(i,X[0:index,:], y[0:index], test_perc, parameters)
             self.models.append(m)
             i=i+1
 
@@ -56,7 +59,7 @@ class LCModel:
             m.train()
     
     def predict(self, test_data):
-        m.model.predict(test_data)
+        return m.model.predict(test_data)
         
     def save(self):
         self.model.save()
