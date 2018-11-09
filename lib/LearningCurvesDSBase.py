@@ -68,13 +68,16 @@ class LearningCurvesDSBaseWrapper:
         self.model.load(file)
     
     def getLearningCurves(self):
-        trainScores = []
-        testScores = []
+        self.trainScores = []
+        self.testScores = []
         
         for m in self.models:
-            trainScores.append(m.getTrainScore())
-            testScores.append(m.getTestScore())
+            self.trainScores.append(m.getTrainScore())
+            self.testScores.append(m.getTestScore())
         
-        result = np.stack([trainScores,testScores],axis=0)
+        result = np.stack([self.trainScores,self.testScores],axis=0)
         
         return result
+
+    def getScore(self):
+        return self.testScores[-1]
