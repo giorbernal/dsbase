@@ -1,14 +1,13 @@
 import numpy as np
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
 
 # BaseModel. Reference for every model
 class LinealRegressionDSBaseModel:
-    def __init__(self, id, X, y, test_perc, parameters):
+    def __init__(self, id, X, y, test_perc, parameters, splitter, normalizer):
         self.id=id
         print("initiating model " + str(self.id) + ". LinearRegression");
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_perc/100, random_state=42)
+        X_train, X_test, y_train, y_test = splitter(X, y, test_size=test_perc, random_state=42)
         self.X_train=X_train
         self.X_test=X_test
         self.y_train=y_train

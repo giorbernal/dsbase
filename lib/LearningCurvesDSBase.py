@@ -4,7 +4,7 @@ import numpy as np
 
 # BaseModel. Reference for every model
 class BaseModel:
-    def __init__(self, id, X, y, test_perc, parameters):
+    def __init__(self, id, X, y, test_perc, parameters, splitter, normalizer):
         self.id=id
         self.X=X
         self.y=y
@@ -39,7 +39,7 @@ def basicModelParamsToMap(param1,param2,param3,param4):
 
 # Learning Curves Model
 class LearningCurvesDSBaseWrapper:
-    def __init__(self, X, y, percentiles, model=BaseModel, test_perc=30, parameters={}):
+    def __init__(self, X, y, percentiles, test_perc=0.3, model=BaseModel, parameters={}, splitter=None, normalizer=None):
         print("X size:" + str(X.shape))
         print("y size:" + str(y.shape))
 
@@ -48,7 +48,7 @@ class LearningCurvesDSBaseWrapper:
         i = 0
         for p in percentiles:
             index=int(len*p/100)
-            m=model(i,X[0:index,:], y[0:index], test_perc, parameters)
+            m=model(i,X[0:index,:], y[0:index], test_perc, parameters, splitter, normalizer)
             self.models.append(m)
             i=i+1
 
