@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
+import ConstantsDSBase as constants
 from sklearn.preprocessing import MinMaxScaler
+
 
 class DNNRegressionDSBaseModel:
     def __init__(self, id, X, y, test_perc, parameters, splitter, normalizer):
