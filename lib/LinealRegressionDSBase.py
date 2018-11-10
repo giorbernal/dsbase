@@ -27,7 +27,6 @@ class LinealRegressionDSBaseModel:
         print("training model " + str(self.id) + ". " + description);
         self.model.fit(self.X_train, self.y_train)
 
-        
     def predict(self, test_data):
         print("predicting model " + str(self.id) + ". " + description);
         return self.model.predict(test_data)
