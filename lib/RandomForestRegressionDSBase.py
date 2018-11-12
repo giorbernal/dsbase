@@ -36,15 +36,15 @@ class RandomForestRegressionDSBaseModel:
     def getTestScore(self):
         return self.model.score(self.X_test, self.y_test);
         
-    def save(self):
-        file_path=constants.PERSISTANCE_FOLDER + constants.SEP + description + "_" + str(self.id) + constants.EXT
+    def save(self, folder_path=constants.PERSISTANCE_FOLDER):
+        file_path=folder_path + constants.SEP + description + "_" + str(self.id) + constants.EXT
         print("saving model: " + file_path)
         joblib.dump(self.model, file_path)
     
-    def load(self):
-        file_path=constants.PERSISTANCE_FOLDER + constants.SEP + description + "_" + str(self.id) + constants.EXT
+    def load(self, folder_path=constants.PERSISTANCE_FOLDER):
+        file_path=folder_path + constants.SEP + description + "_" + str(self.id) + constants.EXT
         print("loading model: " + file_path)
-        self.model = joblib.load(file_path)
+        self.model=joblib.load(file_path)
 
 # Params converter function. Reference for every model
 def RandomForestRegressionDSBaseParamsToMap(max_depth=2, n_estimators=100, random_state=None):

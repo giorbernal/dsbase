@@ -1,4 +1,5 @@
 import numpy as np
+import ConstantsDSBase as constants
 
 # Module to handle systematic Variance/Bias trade-off
 
@@ -22,10 +23,10 @@ class BaseModel:
     def getTestScore(self):
         return 0;
         
-    def save(self):
+    def save(self, folder_path=constants.PERSISTANCE_FOLDER):
         pass
     
-    def load(self, file):
+    def load(self, folder_path=constants.PERSISTANCE_FOLDER):
         pass
     
 # Params converter function. Reference for every model
@@ -62,11 +63,11 @@ class LearningCurvesDSBaseWrapper:
     def predict(self, test_data):
         return m.model.predict(test_data)
         
-    def save(self):
-        self.model.save()
+    def save(self, folder_path=constants.PERSISTANCE_FOLDER):
+        self.model.save(folder_path)
 
-    def load(self, file):
-        self.model.load(file)
+    def load(self, folder_path=constants.PERSISTANCE_FOLDER):
+        self.model.load(folder_path)
     
     def getLearningCurves(self):
         self.trainScores = []
