@@ -39,8 +39,8 @@ def basicModelParamsToMap(param1,param2,param3,param4):
     params['p4']=param4    
     return params
 
-# Learning Curves Model
-class LearningCurvesDSBaseWrapper:
+# Model Wrapper
+class ModelDSBaseWrapper:
     def __init__(self, id, X, y, percentiles, test_perc=0.3, model=BaseModel, parameters={}, splitter=None, normalizer=None):
         self.id = id
         print("X size:" + str(X.shape))
