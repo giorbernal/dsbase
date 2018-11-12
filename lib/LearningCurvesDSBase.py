@@ -1,5 +1,6 @@
 import numpy as np
 import ConstantsDSBase as constants
+import tensorflow as tf
 
 # Module to handle systematic Variance/Bias trade-off
 
@@ -55,6 +56,15 @@ class LearningCurvesDSBaseWrapper:
             i=i+1
 
         self.model=self.models[i-1]
+
+    # Only for algorithms based on session (i.e: TensorFlow)
+    def startSession(self):
+        self.sess = tf.Session()
+        for model in self.models:
+            model.setSession(self.sess)
+
+    def closeSession(self):
+        self.sess.close()
 
     def train(self):
         for m in self.models:
