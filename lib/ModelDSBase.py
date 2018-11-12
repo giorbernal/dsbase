@@ -71,7 +71,7 @@ class ModelDSBaseWrapper:
             m.train()
     
     def predict(self, test_data):
-        return m.model.predict(test_data)
+        return self.model.predict(test_data)
         
     def save(self, folder_path=constants.PERSISTANCE_FOLDER):
         self.model.save(folder_path)

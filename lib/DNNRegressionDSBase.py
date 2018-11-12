@@ -3,26 +3,31 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import ConstantsDSBase as constants
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.externals import joblib
 
+description='DNNRegression'
 
 class DNNRegressionDSBaseModel:
     def __init__(self, id, X, y, test_perc, parameters, splitter, normalizer):
         self.id=id
         self.parameters=parameters
-        print("initiating model " + str(self.id) + ". DNNRegression");
+        if (test_perc is not None):
+            print("initiating model " + str(self.id) + ". " + description);
+            # Normalizing
+            self.scalerX=MinMaxScaler()
+            X_s = self.scalerX.fit_transform(X)
+            self.scalery=MinMaxScaler()
+            y_s = self.scalery.fit_transform(y.reshape(-1, 1))
+           
+            X_train, X_test, y_train, y_test = splitter(X_s, y_s, test_size=test_perc, random_state=42)
+            self.X_train=X_train
+            self.X_test=X_test
+            self.y_train=y_train
+            self.y_test=y_test
+        else:
+            print("initiating empty model " + str(self.id) + ". " + description);
+            tf.reset_default_graph()
         
-        # Normalizing
-        self.scalerX=MinMaxScaler()
-        X_s = self.scalerX.fit_transform(X)
-        self.scalery=MinMaxScaler()
-        y_s = self.scalery.fit_transform(y.reshape(-1, 1))
-       
-        X_train, X_test, y_train, y_test = splitter(X_s, y_s, test_size=test_perc, random_state=42)
-        self.X_train=X_train
-        self.X_test=X_test
-        self.y_train=y_train
-        self.y_test=y_test
-
         self.input_size=X.shape[1]
         self.output_size=1 # TODO: multivariable can not be done
         self.layers=self.parameters['layers']
@@ -56,9 +61,12 @@ class DNNRegressionDSBaseModel:
         # Optimizer
         self.optimizer = tf.train.AdamOptimizer(self.alpha)
         self.model = self.optimizer.minimize(self.cost)
+
+        # Persistance manager
+        self.saver = tf.train.Saver()
         
     def train(self):
-        print("training model " + str(self.id) + ". DNNRegression");
+        print("training model " + str(self.id) + ". " + description);
         #tf.reset_default_graph()
         init = tf.global_variables_initializer()
 
@@ -79,16 +87,17 @@ class DNNRegressionDSBaseModel:
                 if batch % 10 == 0:
                     print("epoch " + str(epoch) + ". batch / n_batches:", batch, "/", batches, "cost:", c)
                 cost.append(c)
+        #print('ws_0: ' + str(self.ws[0].eval(self.session)))
         plt.plot(cost)
         plt.title('cost DNN Model ' + str(self.id) + ". alpha=" + str(self.alpha))
         #plot.show()
             
         
     def predict(self, test_data):
-        print("predicting model " + str(self.id) + ". DNNRegression");
+        print("predicting model " + str(self.id) + ". " + description);
         #tf.reset_default_graph()
         test_data_scaled=self.scalerX.transform(test_data)
-        output=sess.run(self.session,self.__forward(),feed_dict={self.X:test_data})
+        output=self.session.run(self.__forward(),feed_dict={self.X:test_data_scaled})
         return self.scalery.inverse_transform(output)
         
     def getTrainScore(self):
@@ -99,14 +108,33 @@ class DNNRegressionDSBaseModel:
         output=self.__score_R2(self.X_test,self.y_test)
         return output
         
-    def save(self):
-        pass
+    def save(self, folder_path=constants.PERSISTANCE_FOLDER):
+        file_path=folder_path + constants.SEP + description + "_" + str(self.id) + constants.EXT
+        print("saving model: " + file_path)
+        self.saver.save(self.session, file_path)
+        scaler_file_path_root=folder_path + constants.SEP + description + "_" + str(self.id)
+        joblib.dump(self.scalerX, scaler_file_path_root + "_scalerX" + constants.EXT)
+        joblib.dump(self.scalery, scaler_file_path_root + "_scalery" + constants.EXT)
     
-    def load(self, file):
-        pass
+    def load(self, folder_path=constants.PERSISTANCE_FOLDER):
+        file_path=folder_path + constants.SEP + description + "_" + str(self.id) + constants.EXT
+        print("loading model: " + file_path)
+        self.saver = tf.train.import_meta_graph(file_path + '.meta')
+        self.saver.restore(self.session,tf.train.latest_checkpoint(folder_path + constants.SEP))
+        #self.saver.restore(self.session, file_path)
+        #print('ws_0: ' + str(self.ws[0].eval(self.session)))
+        scaler_file_path_root=folder_path + constants.SEP + description + "_" + str(self.id)
+        self.scalerX=joblib.load(scaler_file_path_root + "_scalerX" + constants.EXT)
+        self.scalery=joblib.load(scaler_file_path_root + "_scalery" + constants.EXT)
     
     def setSession(self,sess):
         self.session=sess
+
+    def startSession(self):
+        self.session = tf.Session()
+
+    def closeSession(self):
+        self.session.close()
     
     def __forward(self):
         in_data=self.X
