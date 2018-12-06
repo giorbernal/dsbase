@@ -1,12 +1,12 @@
 import numpy as np
 import ConstantsDSBase as constants
 
-from sklearn.svm import SVC
+from sklearn.ensemble import AdaBoostClassifier 
 from sklearn.externals import joblib
 
-description='SVMClassification'
+description='AdaBoostClassification'
 
-class SVMClassificationDSBaseModel:
+class AdaBoostClassificationDSBaseModel:
     def __init__(self, id, X, y, test_perc, parameters, splitter, normalizer):
         self.id=id
         if (X is not None):
@@ -21,7 +21,8 @@ class SVMClassificationDSBaseModel:
         self.y_train=y_train
         self.y_test=y_test
 
-        self.model = SVC(kernel=parameters['kernel'],C=parameters['C'],gamma=parameters['gamma'])
+        self.model = AdaBoostClassifier(n_estimators=parameters['n_estimators'], learning_rate=parameters['learning_rate'],
+                            random_state=None)
         
     def train(self):
         print("training model " + str(self.id) + ". " + description);
@@ -48,10 +49,9 @@ class SVMClassificationDSBaseModel:
         self.model = joblib.load(file_path)
 
 # Params converter function. Reference for every model
-def SVMClassificationDSBaseModelParamsToMap(kernel='linear',C=1,gamma='auto'):
+def AdaBoostClassificationDSBaseModelParamsToMap(n_estimators=50, learning_rate=1.0):
     params={}
-    params['kernel']=kernel 
-    params['C']=C 
-    params['gamma']=gamma 
+    params['n_estimators']=n_estimators
+    params['learning_rate']=learning_rate
     return params
 
