@@ -3,7 +3,7 @@ import ConstantsDSBase as constants
 from sklearn.ensemble.gradient_boosting import GradientBoostingRegressor
 from sklearn.externals import joblib
 
-description='RandomForestRegressor'
+description='GradientBoostingRegressor'
 
 class GradientBoostingRegressionDSBaseModel:
     def __init__(self, id, X, y, test_perc, parameters, splitter, normalizer):
