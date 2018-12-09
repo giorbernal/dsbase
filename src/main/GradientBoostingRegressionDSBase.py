@@ -49,6 +49,9 @@ class GradientBoostingRegressionDSBaseModel:
         print("loading model: " + file_path)
         self.model=joblib.load(file_path)
 
+    def close(self):
+        pass
+
 # Params converter function. Reference for every model
 def GradientBoostingRegressionDSBaseParamsToMap(max_depth=3, n_estimators=100, learning_rate=0.1, random_state=None):
     params={}

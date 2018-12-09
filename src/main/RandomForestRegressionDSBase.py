@@ -46,6 +46,9 @@ class RandomForestRegressionDSBaseModel:
         print("loading model: " + file_path)
         self.model=joblib.load(file_path)
 
+    def close(self):
+        pass
+
 # Params converter function. Reference for every model
 def RandomForestRegressionDSBaseParamsToMap(max_depth=2, n_estimators=100, random_state=None):
     params={}

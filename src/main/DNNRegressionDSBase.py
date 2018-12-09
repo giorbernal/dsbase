@@ -136,7 +136,7 @@ class DNNRegressionDSBaseModel:
             self.scalerX=joblib.load(scaler_file_path_root + "_scalerX" + constants.EXT)
             self.scalery=joblib.load(scaler_file_path_root + "_scalery" + constants.EXT)
 
-    def closeSession(self):
+    def close(self):
         self.session.close()
         self.graph.finalize()
     

@@ -47,6 +47,9 @@ class LinealRegressionDSBaseModel:
         print("loading model: " + file_path)
         self.model = joblib.load(file_path)
 
+    def close(self):
+        pass
+
 # Params converter function. Reference for every model
 def LinealRegressionDSBaseParamsToMap(normalize=False):
     params={}

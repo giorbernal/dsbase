@@ -57,9 +57,9 @@ class ModelDSBaseWrapper:
 
         self.model=self.models[i-1]
 
-    def closeSession(self):
+    def close(self):
         for m in self.models:
-            m.closeSession()
+            m.close()
 
     def train(self):
         for m in self.models:
