@@ -1,6 +1,5 @@
 import numpy as np
 import ConstantsDSBase as constants
-import tensorflow as tf
 
 # Module to handle systematic Variance/Bias trade-off
 
@@ -47,6 +46,7 @@ class ModelDSBaseWrapper:
         print("y size:" + str(y.shape))
 
         self.models = []
+
         len=X.shape[0]
         i = 0
         for p in percentiles:
@@ -57,14 +57,9 @@ class ModelDSBaseWrapper:
 
         self.model=self.models[i-1]
 
-    # Only for algorithms based on session (i.e: TensorFlow)
-    def startSession(self):
-        self.sess = tf.Session()
-        for model in self.models:
-            model.setSession(self.sess)
-
     def closeSession(self):
-        self.sess.close()
+        for m in self.models:
+            m.closeSession()
 
     def train(self):
         for m in self.models:
