@@ -47,6 +47,9 @@ class SVMClassificationDSBaseModel:
         print("loading model: " + file_path)
         self.model = joblib.load(file_path)
 
+    def close(self):
+        pass
+
 # Params converter function. Reference for every model
 def SVMClassificationDSBaseModelParamsToMap(kernel='linear',C=1,gamma='auto'):
     params={}

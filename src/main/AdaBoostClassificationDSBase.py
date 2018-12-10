@@ -48,6 +48,9 @@ class AdaBoostClassificationDSBaseModel:
         print("loading model: " + file_path)
         self.model = joblib.load(file_path)
 
+    def close(self):
+        pass
+
 # Params converter function. Reference for every model
 def AdaBoostClassificationDSBaseModelParamsToMap(n_estimators=50, learning_rate=1.0):
     params={}

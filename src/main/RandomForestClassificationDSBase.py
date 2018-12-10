@@ -48,6 +48,9 @@ class RandomForestClassificationDSBaseModel:
         print("loading model: " + file_path)
         self.model = joblib.load(file_path)
 
+    def close(self):
+        pass
+
 # Params converter function. Reference for every model
 def RandomForestClassificationDSBaseModelParamsToMap(n_estimators=100, max_depth=10):
     params={}
