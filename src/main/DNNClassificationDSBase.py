@@ -7,6 +7,7 @@ from sklearn.externals import joblib
 
 description='DNNClassification'
 
+# This implementation have some convergency problems for Binary Clasiffication. It might contain a bug. Can you find it?
 class DNNClassificationDSBaseModel:
     def __init__(self, id, X, y, test_perc, parameters, splitter, normalizer):
         self.graph=tf.Graph()
@@ -33,6 +34,9 @@ class DNNClassificationDSBaseModel:
             self.output_size=1 # TODO: multivariable can not be done
             self.layers=self.parameters['layers']
             self.alpha=self.parameters['alpha']
+            self.beta1=self.parameters['beta1']            
+            self.beta2=self.parameters['beta2']
+            self.epsylon=self.parameters['epsylon']
             
             # Placeholders
             self.X = tf.placeholder(dtype=tf.float32, shape=[None,self.input_size])
@@ -43,13 +47,17 @@ class DNNClassificationDSBaseModel:
             self.bs=[]
             prev_l=self.input_size
             for l in self.layers:
-                w=tf.Variable(tf.truncated_normal(shape=[prev_l,l],stddev=0.1))
-                b=tf.Variable(tf.truncated_normal(shape=[l],stddev=0.1))
+                #w=tf.Variable(tf.truncated_normal(shape=[prev_l,l],stddev=0.1))
+                #b=tf.Variable(tf.truncated_normal(shape=[l],stddev=0.1))
+                w=tf.get_variable("w" + str(l),shape=[prev_l,l],initializer=tf.contrib.layers.xavier_initializer())
+                b=tf.get_variable("b" + str(l), shape=[l],initializer=tf.contrib.layers.xavier_initializer())
                 self.ws.append(w)
                 self.bs.append(b)
                 prev_l=l
-            w=tf.Variable(tf.truncated_normal(shape=[prev_l,1],stddev=0.1))
-            b=tf.Variable(tf.truncated_normal(shape=[1],stddev=0.1))
+            #w=tf.Variable(tf.truncated_normal(shape=[prev_l,1],stddev=0.1))
+            #b=tf.Variable(tf.truncated_normal(shape=[1],stddev=0.1))
+            w=tf.get_variable("w",shape=[prev_l,1],initializer=tf.contrib.layers.xavier_initializer())
+            b=tf.get_variable("b",shape=[1],initializer=tf.contrib.layers.xavier_initializer())            
             self.ws.append(w)
             self.bs.append(b)
 
@@ -63,7 +71,8 @@ class DNNClassificationDSBaseModel:
                 self.cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.y,logits=self.out_data))
             
             # Optimizer
-            self.optimizer = tf.train.AdamOptimizer(self.alpha)
+            self.optimizer = tf.train.AdamOptimizer(self.alpha, self.beta1, self.beta2, self.epsylon)
+            #self.optimizer = tf.train.GradientDescentOptimizer(self.alpha)
             self.model = self.optimizer.minimize(self.cost)
 
             # Persistance manager
@@ -96,7 +105,7 @@ class DNNClassificationDSBaseModel:
                     cost.append(c)
             #print('ws_0: ' + str(self.ws[0].eval(self.session)))
             plt.plot(cost)
-            plt.title('cost DNN Model ' + str(self.id) + ". alpha=" + str(self.alpha))
+            plt.title('cost DNN Model ' + str(self.id) + ". alpha=" + str(self.alpha) + ", beta1: " + str(self.beta1) + ", beta2: " + str(self.beta2) + ",epsylon: " + str(self.epsylon))
             #plot.show()
             
         
@@ -152,10 +161,13 @@ class DNNClassificationDSBaseModel:
                 in_data=out_data
             out_data=tf.matmul(in_data,self.ws[-1])+self.bs[-1]
             return out_data
+
     
     def __score(self,X, y):
         with self.graph.as_default():
-            yp = self.__forward()
+            yp_prev_1 = self.__forward()
+            yp_prev_2 = tf.nn.sigmoid(yp_prev_1)
+            yp = tf.round(yp_prev_2)
             #C = tf.reduce_sum(tf.abs(tf.subtract(tf.cast(y, dtype=tf.float32),tf.cast(yp, dtype=tf.float32))))
             #P = tf.subtract(tf.constant(1,dtype=tf.float32),tf.divide(C,len(y)))
             #P = tf.divide(C,len(y))
@@ -166,10 +178,13 @@ class DNNClassificationDSBaseModel:
             return output
 
 # Params converter function. Reference for every model
-def DNNClassificationDSBaseParamsToMap(layers, alpha=1e-2, batch_size=128, epochs=10):
+def DNNClassificationDSBaseParamsToMap(layers, alpha=1e-2, beta1=0.9, beta2=0.999, epsylon=1e-8,batch_size=128, epochs=10):
     params={}
     params['layers']=layers
     params['alpha']=alpha
+    params['beta1']=beta1
+    params['beta2']=beta2
+    params['epsylon']=epsylon       
     params['batch_size']=batch_size
     params['epochs']=epochs
     return params
