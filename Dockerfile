@@ -9,8 +9,6 @@ RUN ["mkdir", "notebooks"]
 RUN ["mkdir", "opt/dsbase"]
 
 COPY src/main/*.py /opt/dsbase/
-COPY docker/Test.ipynb /notebooks/
-COPY src/test/*.py /notebooks/
 COPY docker/conf/.jupyter /root/.jupyter
 COPY docker/conf/.kaggle /root/.kaggle
 COPY docker/run_jupyter.sh /

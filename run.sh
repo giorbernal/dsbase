@@ -9,5 +9,5 @@ docker run \
 	-e KAGGLE_KEY='<mykey>' \
 	--memory=6g \
 	--memory-swap=-1 \
-	-v $(pwd)/notebooks:/notebooks \
+	-v $(pwd)/src/test:/notebooks \
 	giorbernal/dsbase

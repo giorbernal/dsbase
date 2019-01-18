@@ -6,9 +6,9 @@ IS_DSBASE=$(/opt/conda/bin/conda-env list | grep dsbase | wc -l)
 
 # Installing/charging environment
 if [ $IS_DSBASE == 0 ]; then
-	echo "creating dsbae environment ..." >> dsbase.log
+	echo "creating dsbase environment ..." >> dsbase.log
 	/opt/conda/bin/conda create -n dsbase python=3.6.3 -y
-	echo "dsbae environment created!" >> dsbase.log
+	echo "dsbase environment created!" >> dsbase.log
 	source activate dsbase
 	echo "inside dsbase environment!. Intalling the whole stuff ..." >> dsbase.log
 	/opt/conda/bin/conda install numpy pandas scikit-learn matplotlib seaborn -y && \
