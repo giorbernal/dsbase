@@ -1,18 +1,20 @@
-FROM continuumio/anaconda3
+FROM continuumio/anaconda3:5.3.0
 MAINTAINER "Gior Bernal"
 
-RUN apt-get update && apt-get install -y libgtk2.0-dev && \
-    rm -rf /var/lib/apt/lists/* && \
-    /opt/conda/bin/conda install jupyter -y && \
-    /opt/conda/bin/conda install -c menpo opencv3 -y && \
-    /opt/conda/bin/conda install numpy pandas scikit-learn matplotlib seaborn pyyaml h5py keras -y && \
-    /opt/conda/bin/conda upgrade dask && \
-    pip install tensorflow imutils
+RUN apt-get update -y && \
+    apt-get install vim -y && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN ["mkdir", "notebooks"]
+RUN ["mkdir", "opt/dsbase"]
 
-COPY jupyter_notebook_config.py /root/.jupyter/
-COPY run_jupyter.sh /
+COPY src/main/*.py /opt/dsbase/
+COPY docker/Test.ipynb /notebooks/
+COPY src/test/*.py /notebooks/
+COPY docker/conf/.jupyter /root/.jupyter
+COPY docker/conf/.kaggle /root/.kaggle
+COPY docker/run_jupyter.sh /
+COPY docker/entrypoint.sh /
 
 # Jupyter and Tensorboard ports
 EXPOSE 8888 6006
@@ -20,4 +22,4 @@ EXPOSE 8888 6006
 # Store notebooks in this mounted directory
 VOLUME /notebooks
 
-CMD ["/run_jupyter.sh"]
+CMD ["/entrypoint.sh"]
