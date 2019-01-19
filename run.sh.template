@@ -10,5 +10,5 @@ docker run \
 	-e JUPYTER_PASSWORD='<sha1_jupyter_pwd>'
 	--memory=6g \
 	--memory-swap=-1 \
-	-v $(pwd)/src/test:/notebooks \
+	-v <work_folder>:/notebooks \
 	giorbernal/dsbase
