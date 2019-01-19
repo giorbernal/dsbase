@@ -3,6 +3,7 @@ MAINTAINER "Gior Bernal"
 
 RUN apt-get update -y && \
     apt-get install vim -y && \
+    apt-get install procps -y && \
     rm -rf /var/lib/apt/lists/*
 
 RUN ["mkdir", "notebooks"]
