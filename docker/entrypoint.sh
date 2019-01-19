@@ -35,5 +35,12 @@ sed -i s/KAGGLE_USER/$KAGGLE_USER/g $KAGGLE_FILE
 sed -i s/KAGGLE_KEY/$KAGGLE_KEY/g $KAGGLE_FILE
 echo "kaggle.json setted!" >> dsbase.log
 
+# Setting jupyter password file
+JUPYTER_PASSWORD_FILE=/root/.jupyter/jupyter_notebook_config.json
+sed -i s/JUPYTER_PASSWORD/$JUPYTER_PASSWORD/g $JUPYTER_PASSWORD_FILE
+echo "jupyter password setted!" >> dsbase.log
+
+JUPYTER_PASSWORD
+
 echo "Initiate Jupyter Notebook!" >> dsbase.log
 /run_jupyter.sh

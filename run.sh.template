@@ -7,6 +7,7 @@ docker run \
 	-d \
 	-e KAGGLE_USER='<user>' \
 	-e KAGGLE_KEY='<key>' \
+	-e JUPYTER_PASSWORD='<sha1_jupyter_pwd>'
 	--memory=6g \
 	--memory-swap=-1 \
 	-v $(pwd)/src/test:/notebooks \
