@@ -1,3 +1,15 @@
+# Table of Contents
+- [DSBase Library](#dsbase-library)
+- [ModelDSBase](#modeldsbase)
+  * [Constructor](#constructor)
+  * [Methods](#methods)
+  * [Example](#example)
+- [Regression Models](#regression-models)
+    + [Evaluation set](#evaluation-set)
+- [Classification Models](#classification-models)
+    + [Evaluation set](#evaluation-set-1)
+- [Docker](#docker)
+***
 # DSBase Library
 The full name of this project would be "Data Science Base Models and Bootcamp". It is the base of real data science projects.
 
@@ -63,3 +75,19 @@ These are the available models for classification:
 - **Deep Neural Network Classifier**: DNNClassificationKerasDSBase.py - *keras* implementation
 ### Evaluation set
 For Evaluating and testing this models we have used [this](https://archive.ics.uci.edu/ml/datasets/Bank+Marketing) dataset
+
+# Docker
+A docker container is provided to export the computation environment anywhere. To build the image, just execute this:
+```
+./build.sh
+```
+Then, you will have to set the following environment variables in your own *run.sh* script, retrieved from the template *run.sh.template*:
+- KAGGLE_USER (*Optional*): Kaggle user if you need it
+- KAGGLE_KEY (*Optional*): Kaggle key if you need it
+- JUPYTER_PASSWORD (*Mandatory*): Password to access to the notebook, check jupyter [documentation](https://jupyter-notebook.readthedocs.io/en/stable/public_server.html) to set this encrypted password.
+
+Run your initialization script:
+```
+./run.sh
+```
+After a while (a virtual environment is going to be set in the container), you will be able to access to the notebook by using the usual port 8888.
