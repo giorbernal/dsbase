@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t giorbernal/dsbase .
+sudo docker build -t giorbernal/dsbase .
