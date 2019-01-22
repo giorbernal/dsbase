@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker run \
+sudo docker run \
 	--name=dsbase1 \
 	-p 8888:8888 \
 	-p 6006:6006 \
@@ -8,6 +8,7 @@ docker run \
 	-e KAGGLE_USER='<user>' \
 	-e KAGGLE_KEY='<key>' \
 	-e JUPYTER_PASSWORD='<sha1_jupyter_pwd>'
+	-e COMMAND='<commnad>'	
 	--memory=6g \
 	--memory-swap=-1 \
 	-v <work_folder>:/notebooks \

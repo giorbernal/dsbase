@@ -40,5 +40,11 @@ JUPYTER_PASSWORD_FILE=/root/.jupyter/jupyter_notebook_config.json
 sed -i s/JUPYTER_PASSWORD/$JUPYTER_PASSWORD/g $JUPYTER_PASSWORD_FILE
 echo "jupyter password setted!" >> dsbase.log
 
+# Additional command
+if [[ ! -z $COMMAND ]];then
+	echo "executing additional command: $COMMAND" >> dsbase.log
+	$COMMAND
+fi
+
 echo "Initiate Jupyter Notebook!" >> dsbase.log
 /run_jupyter.sh
