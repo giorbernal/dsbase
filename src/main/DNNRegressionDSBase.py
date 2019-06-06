@@ -2,26 +2,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import ConstantsDSBase as constants
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.externals import joblib
 
 description='DNNRegression'
 
 class DNNRegressionDSBaseModel:
-    def __init__(self, id, X, y, test_perc, parameters, splitter, normalizer):
+    def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.graph=tf.Graph()
         with self.graph.as_default():
             self.id=id
             self.parameters=parameters
-            if (test_perc is not None):
+            if (~self.__ifEmptyModel(y_train)):
                 print("initiating model " + str(self.id) + ". " + description);
-                # Normalizing
-                self.scalerX=MinMaxScaler()
-                X_s = self.scalerX.fit_transform(X)
-                self.scalery=MinMaxScaler()
-                y_s = self.scalery.fit_transform(y.reshape(-1, 1))
-               
-                X_train, X_test, y_train, y_test = splitter(X_s, y_s, test_size=test_perc, random_state=42)
                 self.X_train=X_train
                 self.X_test=X_test
                 self.y_train=y_train
@@ -29,7 +21,7 @@ class DNNRegressionDSBaseModel:
             else:
                 print("initiating empty model " + str(self.id) + ". " + description);
             
-            self.input_size=X.shape[1]
+            self.input_size=X_train.shape[1]
             self.output_size=1 # TODO: multivariable can not be done
             self.layers=self.parameters['layers']
             self.alpha=self.parameters['alpha']
@@ -101,9 +93,7 @@ class DNNRegressionDSBaseModel:
         with self.graph.as_default():
             print("predicting model " + str(self.id) + ". " + description);
             #tf.reset_default_graph()
-            test_data_scaled=self.scalerX.transform(test_data)
-            output=self.session.run(self.__forward(),feed_dict={self.X:test_data_scaled})
-            return self.scalery.inverse_transform(output)
+            return self.session.run(self.__forward(),feed_dict={self.X:test_data})
         
     def getTrainScore(self):
         with self.graph.as_default():
@@ -120,9 +110,6 @@ class DNNRegressionDSBaseModel:
             file_path=folder_path + constants.SEP + description + "_" + str(self.id) + constants.EXT
             print("saving model: " + file_path)
             self.saver.save(self.session, file_path)
-            scaler_file_path_root=folder_path + constants.SEP + description + "_" + str(self.id)
-            joblib.dump(self.scalerX, scaler_file_path_root + "_scalerX" + constants.EXT)
-            joblib.dump(self.scalery, scaler_file_path_root + "_scalery" + constants.EXT)
     
     def load(self, folder_path=constants.PERSISTANCE_FOLDER):
         with self.graph.as_default():
@@ -132,9 +119,6 @@ class DNNRegressionDSBaseModel:
             self.saver.restore(self.session,tf.train.latest_checkpoint(folder_path + constants.SEP))
             #self.saver.restore(self.session, file_path)
             #print('ws_0: ' + str(self.ws[0].eval(self.session)))
-            scaler_file_path_root=folder_path + constants.SEP + description + "_" + str(self.id)
-            self.scalerX=joblib.load(scaler_file_path_root + "_scalerX" + constants.EXT)
-            self.scalery=joblib.load(scaler_file_path_root + "_scalery" + constants.EXT)
 
     def close(self):
         self.session.close()
@@ -158,6 +142,12 @@ class DNNRegressionDSBaseModel:
             R = tf.subtract(tf.constant(1,dtype=tf.float32),tf.divide(u,v))
             output=self.session.run(R,feed_dict={self.X:X})
             return output
+
+    def __ifEmptyModel(self, vector):
+        if ((vector.mean()==1) & (vector.var()==0)):
+            return 1
+        else:
+            return 0
 
 # Params converter function. Reference for every model
 def DNNRegressionDSBaseParamsToMap(layers, alpha=1e-2, batch_size=128, epochs=10):

@@ -7,15 +7,14 @@ from sklearn.externals import joblib
 description='LinearRegression'
 
 class LinealRegressionDSBaseModel:
-    def __init__(self, id, X, y, test_perc, parameters, splitter, normalizer):
+    def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
-        if (X is not None):
+        if (X_train is not None):
             print("initiating model " + str(self.id) + ". " + description);
         else:
             print("initiating empty model " + str(self.id) + ". " + description);
             return
 
-        X_train, X_test, y_train, y_test = splitter(X, y, test_size=test_perc, random_state=42)
         self.X_train=X_train
         self.X_test=X_test
         self.y_train=y_train

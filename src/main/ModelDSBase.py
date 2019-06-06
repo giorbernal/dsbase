@@ -5,11 +5,11 @@ import ConstantsDSBase as constants
 
 # BaseModel. Reference for every model
 class BaseModel:
-    def __init__(self, id, X, y, test_perc, parameters, splitter, normalizer):
+    def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
-        self.X=X
-        self.y=y
-        print("initiating model " + str(self.id) + ". DO NOTHING. Just information: " + str(X.shape));
+        self.X_train=X_train
+        self.y_train=y_train
+        print("initiating model " + str(self.id) + ". DO NOTHING. Just information: " + str(X_train.shape));
         
     def train(self):
         print("training model " + str(self.id) + ". DO NOTHING. Just information");
@@ -40,18 +40,20 @@ def basicModelParamsToMap(param1,param2,param3,param4):
 
 # Model Wrapper
 class ModelDSBaseWrapper:
-    def __init__(self, id, X, y, percentiles, test_perc=0.3, model=BaseModel, parameters={}, splitter=None, normalizer=None):
+    def __init__(self, id, X_train, y_train, X_test, y_test, percentiles, model=BaseModel, parameters={}):
         self.id = id
-        print("X size:" + str(X.shape))
-        print("y size:" + str(y.shape))
+        print("X_train size:" + str(X_train.shape))
+        print("y_train size:" + str(y_train.shape))
+        print("X_test size:" + str(X_test.shape))
+        print("y_test size:" + str(y_test.shape))
 
         self.models = []
 
-        len=X.shape[0]
+        len=X_train.shape[0]
         i = 0
         for p in percentiles:
             index=int(len*p/100)
-            m=model(self.id + str(i),X[0:index,:], y[0:index], test_perc, parameters, splitter, normalizer)
+            m=model(self.id + str(i),X_train[0:index,:], y_train[0:index], X_test[0:index,:], y_test[0:index], parameters)
             self.models.append(m)
             i=i+1
 
