@@ -7,7 +7,7 @@ from sklearn.externals import joblib
 description='RandomForestClassification'
 
 class RandomForestClassificationDSBaseModel:
-    def __init__(self, id, X_train, y_train, X_train, y_train, parameters):
+    def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
         if (X_train is not None):
             print("initiating model " + str(self.id) + ". " + description);
@@ -20,8 +20,7 @@ class RandomForestClassificationDSBaseModel:
         self.y_train=y_train
         self.y_test=y_test
 
-        self.model = RandomForestClassifier(n_estimators=parameters['n_estimators'], max_depth=parameters['max_depth'],
-                            random_state=0)
+        self.model = RandomForestClassifier(n_estimators=parameters['n_estimators'], max_depth=parameters['max_depth'],random_state=0)
         
     def train(self):
         print("training model " + str(self.id) + ". " + description);

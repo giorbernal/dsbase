@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import ConstantsDSBase as constants
 import keras
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.externals import joblib
 from keras.models import Sequential
 from keras.models import load_model
@@ -11,28 +10,22 @@ from keras.layers import Dense
 description='DNNClassificationKeras'
 
 class DNNClassificationKerasDSBaseModel:
-    def __init__(self, id, X, y, test_perc, parameters, splitter, normalizer):
+    def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
         self.parameters=parameters
-        if (test_perc is not None):
+        if (y_train != None):
             print("initiating model " + str(self.id) + ". " + description);
-            # Normalizing
-            self.scalerX=MinMaxScaler()
-            X_s = self.scalerX.fit_transform(X)
-            self.scalery=MinMaxScaler()
-            y_s = self.scalery.fit_transform(y.reshape(-1, 1))
-           
-            X_train, X_test, y_train, y_test = splitter(X_s, y_s, test_size=test_perc, random_state=42)
+ 
             self.X_train=X_train
             self.X_test=X_test
             self.y_train=y_train
             self.y_test=y_test
 
-            self.input_size=X.shape[1]
-            if (max(y)==1):
+            self.input_size=X_train.shape[1]
+            if (max(y_train)==1):
                 self.output_size=1
             else:
-                self.output_size=max(y)
+                self.output_size=max(y_train)
 
             self.layers=self.parameters['layers']
             self.alpha=self.parameters['alpha']
@@ -62,9 +55,7 @@ class DNNClassificationKerasDSBaseModel:
         self.model.fit(self.X_train, self.y_train, epochs=epochs, batch_size=self.batch_size)
 
     def predict(self, test_data):
-        test_data_norm = self.scalerX.transform(test_data)
-        results = self.model.predict_classes(test_data_norm)
-        return self.scalery.inverse_transform(results)
+        return self.model.predict_classes(test_data)
 
     def getTrainScore(self):
         return self.model.evaluate(self.X_train, self.y_train, batch_size=self.batch_size)[1]
@@ -75,21 +66,19 @@ class DNNClassificationKerasDSBaseModel:
     def save(self, folder_path=constants.PERSISTANCE_FOLDER):
         file_path=folder_path + constants.SEP + description + "_" + str(self.id) + constants.EXT  # .h5 file
         self.model.save(file_path)
-        scaler_file_path_root=folder_path + constants.SEP + description + "_" + str(self.id)
-        joblib.dump(self.scalerX, scaler_file_path_root + "_scalerX" + constants.EXT)
-        joblib.dump(self.scalery, scaler_file_path_root + "_scalery" + constants.EXT)
-
     
     def load(self, folder_path=constants.PERSISTANCE_FOLDER):
         file_path=folder_path + constants.SEP + description + "_" + str(self.id) + constants.EXT  # .h5 file
         self.model = load_model(file_path)
-        scaler_file_path_root=folder_path + constants.SEP + description + "_" + str(self.id)
-        self.scalerX=joblib.load(scaler_file_path_root + "_scalerX" + constants.EXT)
-        self.scalery=joblib.load(scaler_file_path_root + "_scalery" + constants.EXT)
 
     def close(self):
         pass
 
+    def __ifEmptyModel(self, vector):
+        if ((vector.mean()==1) & (vector.var()==0)):
+            return 1
+        else:
+            return 0
 
 # Params converter function. Reference for every model
 def DNNClassificationKerasDSBaseParamsToMap(layers, alpha=1e-2, beta1=0.9, beta2=0.999, epsilon=1e-8,batch_size=128, epochs=10):

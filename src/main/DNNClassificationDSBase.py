@@ -8,6 +8,7 @@ from sklearn.externals import joblib
 description='DNNClassification'
 
 # This implementation have some convergency problems for Binary Clasiffication. It might contain a bug. Can you find it?
+# Deprecated
 class DNNClassificationDSBaseModel:
     def __init__(self, id, X, y, test_perc, parameters, splitter, normalizer):
         self.graph=tf.Graph()
