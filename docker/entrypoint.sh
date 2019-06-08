@@ -12,7 +12,11 @@ if [ $IS_DSBASE == 0 ]; then
 	source activate dsbase
 	echo "inside dsbase environment!. Intalling the whole stuff ..." >> dsbase.log
 	/opt/conda/bin/conda install numpy pandas scikit-learn matplotlib seaborn nltk -y && \
-	echo "   ... numpy pandas scikit-learn matplotlib seaborn installed!" >> dsbase.log
+	echo "   ... numpy pandas scikit-learn matplotlib seaborn nltk installed!" >> dsbase.log
+	/opt/conda/bin/conda install lightgbm -y && \
+	echo "   ... lightgbm installed!" >> dsbase.log
+	/opt/conda/bin/conda install -c conda-forge xgboost -y && \
+	echo "   ... xgboost installed!" >> dsbase.log
 	/opt/conda/bin/conda install tensorflow -y && \
 	echo "   ... tensorflow installed!" >> dsbase.log
 	/opt/conda/bin/conda install keras -y && \
