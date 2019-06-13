@@ -72,6 +72,8 @@ These are the available models for classification:
 - **Support Vector Machines**: SVMClassificationDSBase.py - *sklearn* implementation
 - **Random Forest Classifier**: RandomForestClassificationDSBase.py - *sklearn* implementation
 - **Ada Boosting Classifier**: AdaBoostClassificationDSBase.py - *sklearn* implementation
+- **XGBosting Classifier**: XGradientBoostingClassificationDSBase.py - *python* implementation
+- **Lightgbm Classifier**: LightGradientBoostingClassificationDSBase.py - *python* implementation
 - **Deep Neural Network Classifier**: DNNClassificationKerasDSBase.py - *keras* implementation
 ### Evaluation set
 For Evaluating and testing this models we have used [this](https://archive.ics.uci.edu/ml/datasets/Bank+Marketing) dataset

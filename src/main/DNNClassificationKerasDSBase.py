@@ -13,7 +13,7 @@ class DNNClassificationKerasDSBaseModel:
     def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
         self.parameters=parameters
-        if (y_train != None):
+        if (y_train.any() != None):
             print("initiating model " + str(self.id) + ". " + description);
  
             self.X_train=X_train
