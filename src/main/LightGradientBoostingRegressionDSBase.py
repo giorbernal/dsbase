@@ -1,12 +1,12 @@
 import numpy as np
 import ConstantsDSBase as constants
 
-from lightgbm import LGBMClassifier
+from lightgbm import LGBMRegressor
 from sklearn.externals import joblib
 
-description='LightGradientBoostingClassification'
+description='LightGradientBoostingRegression'
 
-class LightGradientBoostingClassificationDSBaseModel:
+class LightGradientBoostingRegressionDSBaseModel:
     def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
         if (X_train is not None):
@@ -20,7 +20,7 @@ class LightGradientBoostingClassificationDSBaseModel:
         self.y_train=y_train
         self.y_test=y_test
 
-        self.model = LGBMClassifier(
+        self.model = LGBMRegressor(
             n_estimators=parameters['n_estimators'],
             max_depth=parameters['max_depth'], 
             learning_rate=parameters['learning_rate'],
@@ -56,7 +56,7 @@ class LightGradientBoostingClassificationDSBaseModel:
         pass
 
 # Params converter function. Reference for every model
-def LightGradientBoostingClassificationDSBaseModelParamsToMap(n_estimators=100, max_depth=10,learning_rate=0.1,objetive='binary',n_jobs=1, num_leaves=31):
+def LightGradientBoostingRegressionDSBaseModelParamsToMap(n_estimators=100, max_depth=10,learning_rate=0.1,objetive='regression',n_jobs=1, num_leaves=31):
     params={}
     params['n_estimators']=n_estimators
     params['max_depth']=max_depth
@@ -65,5 +65,3 @@ def LightGradientBoostingClassificationDSBaseModelParamsToMap(n_estimators=100, 
     params['n_jobs']=n_jobs
     params['num_leaves']=num_leaves
     return params
-
-

@@ -63,6 +63,8 @@ These are the available models for regression:
 - **Linear Regression**: LinealRegressionDSBase.py - *sklearn* implementation
 - **Random Forest Regression**: RandomForestRegressionDSBase.py - *sklearn* implementation
 - **Gradient Boosting Regression**: GradientBoostingRegressionDSBase.py - *sklearn* implementation
+- **XGBosting Regression**: XGradientBoostingRegressionDSBase.py - *python* implementation
+- **Lightgbm Regression**: LightGradientBoostingRegressionDSBase.py - *python* implementation
 - **Deep Neural Network Regression**: DNNRegressionDSBase.py - *Tensor Flow* implementation
 ### Evaluation set
 For evaluating and testing this models we have used [this](https://archive.ics.uci.edu/ml/datasets/Air+Quality) dataset
