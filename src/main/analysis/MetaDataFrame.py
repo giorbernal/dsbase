@@ -2,7 +2,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 import math
+import random
 
 class MetaDataFrame:
     def __init__(self, df_train, df_test, explicit_cat_columns, target):
@@ -155,3 +157,10 @@ class MetaDataFrame:
             sns.clustermap(corr)
         else:
             print('Unknown map type')
+
+    def drawRandomPairPlot(self, k):
+        l = random.sample(population=self.numeric_columns,k=k)
+        for c in ['TT','Id']:
+            if (c in l):
+                l.remove(c)
+        sns.pairplot(data=self.df[self.df['TT']==1][l])
