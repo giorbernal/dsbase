@@ -1,5 +1,6 @@
 # Table of Contents
 - [DSBase Library](#dsbase-library)
+- [Data Analysis](#data-analysis)
 - [ModelDSBase](#modeldsbase)
   * [Constructor](#constructor)
   * [Methods](#methods)
@@ -11,9 +12,35 @@
 - [Docker](#docker)
 ***
 # DSBase Library
-The full name of this project would be "Data Science Base Models and Bootcamp". It is the base of real data science projects.
+The full name of this project would be "Data Science Toolbox for Data Analysis and Base Models and Bootcamp". It is the base of real data science projects.
 
-The project try to unify the interface of every Machine Learning Model, both for classification and regression. The final goal is to wrap them by the ModelDSBase, wich is the called "Model Data Sciece Base". Such model, is designed to systematically determinate whether a model has high Variance (overfitting), or on the other hand, high Bias.
+On one hand, the project try to centralize a strategy to analyze tabular data. The idea is to provide some tools to draw certain key visualizations to help to understand and clean data.
+
+On the other hand, the project try to unify the interface of every Machine Learning Model, both for classification and regression. The final goal is to wrap them by the ModelDSBase, wich is the called "Model Data Sciece Base". Such model, is designed to systematically determinate whether a model has high Variance (overfitting), or on the other hand, high Bias.
+
+# Data Analysis
+
+We will use the MetaDataFrame class to collect a group of methods that would help us to:
+
+* Draw key visualizations
+* Split Numerical and Categorical Data
+* Clean Null columns
+* Impute lack of information
+* Categorical Data Encoding.
+* Correlation analysis
+
+## Evaluation set
+
+For evaluating and testing this strategy we have used [this](https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data) kaggle dataset. To download the data do next (*):
+```
+>> cd datasets
+>> mkdir house-pricing
+>> cd house-pricing
+>> kaggle competitions download -c house-prices-advanced-regression-techniques
+```
+(*): Kaggle client must be installed to follow this method
+
+This notebook  [src/test/Analysis-House-Pricing.ipynb](https://github.com/giorbernal/dsbase/blob/master/src/test/Analysis-House-Pricing.ipynb) show how to follow this strategy.
 
 # ModelDSBase
 As we were telling previously. This is the entry point of the library. The ModelDSBase package contains the main class of the library, wich is the ModelDSBaseWrapper class. Here we are going to see the different params involved in the constructor, and the different methods of the class.
@@ -40,7 +67,7 @@ These are the ModelDSBaseWrapper methods:
 - **close()**: free resources
 
 ## Example
-Examples of use can be observed in [src/main/RegressionAirQuality.ipynb](https://github.com/giorbernal/dsbase/blob/master/src/test/RegressionAirQuality.ipynb) and [src/main/ClassificationDeposit.ipynb](https://github.com/giorbernal/dsbase/blob/develop/src/test/ClassificationDeposit.ipynb), Anyway here can see a example:
+Examples of use can be observed in [src/test/RegressionAirQuality.ipynb](https://github.com/giorbernal/dsbase/blob/master/src/test/RegressionAirQuality.ipynb) and [src/test/ClassificationDeposit.ipynb](https://github.com/giorbernal/dsbase/blob/develop/src/test/ClassificationDeposit.ipynb), Anyway here can see a example:
 ```Python
 from RandomForestClassificationDSBase import RandomForestClassificationDSBaseModel
 from RandomForestClassificationDSBase import RandomForestClassificationDSBaseModelParamsToMap
