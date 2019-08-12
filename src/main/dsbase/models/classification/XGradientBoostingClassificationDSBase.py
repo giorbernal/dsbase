@@ -1,12 +1,12 @@
 import numpy as np
-import ConstantsDSBase as constants
+import dsbase.ConstantsDSBase as constants
 
-from sklearn.ensemble import RandomForestClassifier 
+from xgboost import XGBClassifier 
 from sklearn.externals import joblib
 
-description='RandomForestClassification'
+description='XGradientBoostingClassification'
 
-class RandomForestClassificationDSBaseModel:
+class XGradientBoostingClassificationDSBaseModel:
     def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
         if (X_train is not None):
@@ -20,7 +20,13 @@ class RandomForestClassificationDSBaseModel:
         self.y_train=y_train
         self.y_test=y_test
 
-        self.model = RandomForestClassifier(n_estimators=parameters['n_estimators'], max_depth=parameters['max_depth'],random_state=0)
+        self.model = XGBClassifier(
+            n_estimators=parameters['n_estimators'],
+            max_depth=parameters['max_depth'], 
+            learningrandom_state=parameters['learning_rate'],
+            objective=parameters['objetive'],
+            n_jobs=parameters['n_jobs'],
+            gamma=parameters['gamma'])
         
     def train(self):
         print("training model " + str(self.id) + ". " + description);
@@ -50,10 +56,14 @@ class RandomForestClassificationDSBaseModel:
         pass
 
 # Params converter function. Reference for every model
-def RandomForestClassificationDSBaseModelParamsToMap(n_estimators=100, max_depth=10):
+def XGradientBoostingClassificationDSBaseModelParamsToMap(n_estimators=100, max_depth=10,learning_rate=0.1,objetive='binary:logistic',n_jobs=1, gamma=0):
     params={}
     params['n_estimators']=n_estimators
     params['max_depth']=max_depth
+    params['learning_rate']=learning_rate
+    params['objetive']=objetive
+    params['n_jobs']=n_jobs
+    params['gamma']=gamma
     return params
 
 

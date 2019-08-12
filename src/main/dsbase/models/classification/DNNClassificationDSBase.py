@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
-import ConstantsDSBase as constants
+import dsbase.ConstantsDSBase as constants
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.externals import joblib
 

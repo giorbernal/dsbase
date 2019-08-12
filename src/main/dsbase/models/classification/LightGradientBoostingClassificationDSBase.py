@@ -1,12 +1,12 @@
 import numpy as np
-import ConstantsDSBase as constants
+import dsbase.ConstantsDSBase as constants
 
-from sklearn.svm import SVC
+from lightgbm import LGBMClassifier
 from sklearn.externals import joblib
 
-description='SVMClassification'
+description='LightGradientBoostingClassification'
 
-class SVMClassificationDSBaseModel:
+class LightGradientBoostingClassificationDSBaseModel:
     def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
         if (X_train is not None):
@@ -20,7 +20,13 @@ class SVMClassificationDSBaseModel:
         self.y_train=y_train
         self.y_test=y_test
 
-        self.model = SVC(kernel=parameters['kernel'],C=parameters['C'],gamma=parameters['gamma'])
+        self.model = LGBMClassifier(
+            n_estimators=parameters['n_estimators'],
+            max_depth=parameters['max_depth'], 
+            learning_rate=parameters['learning_rate'],
+            objective=parameters['objetive'],
+            n_jobs=parameters['n_jobs'],
+            num_leaves=parameters['num_leaves'])
         
     def train(self):
         print("training model " + str(self.id) + ". " + description);
@@ -50,10 +56,14 @@ class SVMClassificationDSBaseModel:
         pass
 
 # Params converter function. Reference for every model
-def SVMClassificationDSBaseModelParamsToMap(kernel='linear',C=1,gamma='auto'):
+def LightGradientBoostingClassificationDSBaseModelParamsToMap(n_estimators=100, max_depth=10,learning_rate=0.1,objetive='binary',n_jobs=1, num_leaves=31):
     params={}
-    params['kernel']=kernel 
-    params['C']=C 
-    params['gamma']=gamma 
+    params['n_estimators']=n_estimators
+    params['max_depth']=max_depth
+    params['learning_rate']=learning_rate
+    params['objetive']=objetive
+    params['n_jobs']=n_jobs
+    params['num_leaves']=num_leaves
     return params
+
 

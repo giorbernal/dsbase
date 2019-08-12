@@ -1,5 +1,5 @@
 import numpy as np
-import ConstantsDSBase as constants
+import dsbase.ConstantsDSBase as constants
 
 from lightgbm import LGBMRegressor
 from sklearn.externals import joblib

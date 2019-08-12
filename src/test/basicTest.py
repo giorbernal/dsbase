@@ -6,8 +6,10 @@ import unittest
 
 sys.path.append('../main')
 
-from ModelDSBase import ModelDSBaseWrapper
-from ModelDSBase import basicModelParamsToMap
+from sklearn.model_selection import train_test_split
+
+from dsbase.ModelDSBase import ModelDSBaseWrapper
+from dsbase.ModelDSBase import basicModelParamsToMap
 
 class basicTest(unittest.TestCase):
 
@@ -15,8 +17,10 @@ class basicTest(unittest.TestCase):
 		X = np.random.random((1000,10))
 		y = np.random.random((1000,1))
 		percentiles = [25,50,75,100]
+        
+		X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
-		lcm=ModelDSBaseWrapper('baseTest', X, y, percentiles, parameters=basicModelParamsToMap(1,2,3,4))
+		lcm=ModelDSBaseWrapper('baseTest', X_train, X_test, y_train, y_test, percentiles, parameters=basicModelParamsToMap(1,2,3,4))
 
 		lcm.train()
 

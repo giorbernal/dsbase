@@ -1,12 +1,12 @@
 import numpy as np
-import ConstantsDSBase as constants
+import dsbase.ConstantsDSBase as constants
 
-from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestClassifier 
 from sklearn.externals import joblib
 
-description='LinearRegression'
+description='RandomForestClassification'
 
-class LinealRegressionDSBaseModel:
+class RandomForestClassificationDSBaseModel:
     def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
         if (X_train is not None):
@@ -20,7 +20,7 @@ class LinealRegressionDSBaseModel:
         self.y_train=y_train
         self.y_test=y_test
 
-        self.model = LinearRegression(normalize=parameters['normalize'])
+        self.model = RandomForestClassifier(n_estimators=parameters['n_estimators'], max_depth=parameters['max_depth'],random_state=0)
         
     def train(self):
         print("training model " + str(self.id) + ". " + description);
@@ -50,8 +50,10 @@ class LinealRegressionDSBaseModel:
         pass
 
 # Params converter function. Reference for every model
-def LinealRegressionDSBaseParamsToMap(normalize=False):
+def RandomForestClassificationDSBaseModelParamsToMap(n_estimators=100, max_depth=10):
     params={}
-    params['normalize']=normalize 
+    params['n_estimators']=n_estimators
+    params['max_depth']=max_depth
     return params
+
 

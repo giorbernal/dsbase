@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt 
-import ConstantsDSBase as constants
+import dsbase.ConstantsDSBase as constants
 import keras
 from sklearn.externals import joblib
 from keras.models import Sequential

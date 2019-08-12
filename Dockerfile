@@ -11,7 +11,7 @@ RUN apt-get update -y && \
 RUN ["mkdir", "notebooks"]
 RUN ["mkdir", "opt/dsbase"]
 
-COPY src/main/*.py /opt/dsbase/
+COPY src/main/dsbase/ /opt/dsbase/
 COPY docker/conf/.jupyter /root/.jupyter
 COPY docker/conf/.kaggle /root/.kaggle
 COPY docker/run_jupyter.sh /

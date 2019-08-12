@@ -1,11 +1,12 @@
 import numpy as np
-import ConstantsDSBase as constants
-from sklearn.ensemble import RandomForestRegressor
+import dsbase.ConstantsDSBase as constants
+
+from sklearn.ensemble import AdaBoostClassifier 
 from sklearn.externals import joblib
 
-description='RandomForestRegressor'
+description='AdaBoostClassification'
 
-class RandomForestRegressionDSBaseModel:
+class AdaBoostClassificationDSBaseModel:
     def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
         if (X_train is not None):
@@ -19,8 +20,9 @@ class RandomForestRegressionDSBaseModel:
         self.y_train=y_train
         self.y_test=y_test
 
-        self.model = RandomForestRegressor(max_depth=parameters['max_depth'], n_estimators=parameters['n_estimators'], random_state=parameters['random_state'], oob_score=False)
-    
+        self.model = AdaBoostClassifier(n_estimators=parameters['n_estimators'], learning_rate=parameters['learning_rate'],
+                            random_state=None)
+        
     def train(self):
         print("training model " + str(self.id) + ". " + description);
         self.model.fit(self.X_train, self.y_train)
@@ -43,15 +45,15 @@ class RandomForestRegressionDSBaseModel:
     def load(self, folder_path=constants.PERSISTANCE_FOLDER):
         file_path=folder_path + constants.SEP + description + "_" + str(self.id) + constants.EXT
         print("loading model: " + file_path)
-        self.model=joblib.load(file_path)
+        self.model = joblib.load(file_path)
 
     def close(self):
         pass
 
 # Params converter function. Reference for every model
-def RandomForestRegressionDSBaseParamsToMap(max_depth=2, n_estimators=100, random_state=None):
+def AdaBoostClassificationDSBaseModelParamsToMap(n_estimators=50, learning_rate=1.0):
     params={}
-    params['max_depth']=max_depth 
-    params['n_estimators']=n_estimators 
-    params['random_state']=random_state 
+    params['n_estimators']=n_estimators
+    params['learning_rate']=learning_rate
     return params
+

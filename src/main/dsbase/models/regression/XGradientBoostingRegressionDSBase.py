@@ -1,12 +1,12 @@
 import numpy as np
-import ConstantsDSBase as constants
+import dsbase.ConstantsDSBase as constants
 
-from xgboost import XGBClassifier 
+from xgboost import XGBRegressor 
 from sklearn.externals import joblib
 
-description='XGradientBoostingClassification'
+description='XGradientBoostingRegression'
 
-class XGradientBoostingClassificationDSBaseModel:
+class XGradientBoostingRegressionDSBaseModel:
     def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
         if (X_train is not None):
@@ -20,7 +20,7 @@ class XGradientBoostingClassificationDSBaseModel:
         self.y_train=y_train
         self.y_test=y_test
 
-        self.model = XGBClassifier(
+        self.model = XGBRegressor(
             n_estimators=parameters['n_estimators'],
             max_depth=parameters['max_depth'], 
             learningrandom_state=parameters['learning_rate'],
@@ -56,7 +56,7 @@ class XGradientBoostingClassificationDSBaseModel:
         pass
 
 # Params converter function. Reference for every model
-def XGradientBoostingClassificationDSBaseModelParamsToMap(n_estimators=100, max_depth=10,learning_rate=0.1,objetive='binary:logistic',n_jobs=1, gamma=0):
+def XGradientBoostingRegressionDSBaseModelParamsToMap(n_estimators=100, max_depth=10,learning_rate=0.1,objetive='reg:linear',n_jobs=1, gamma=0):
     params={}
     params['n_estimators']=n_estimators
     params['max_depth']=max_depth

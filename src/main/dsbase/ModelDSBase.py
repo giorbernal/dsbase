@@ -1,5 +1,5 @@
 import numpy as np
-import ConstantsDSBase as constants
+import dsbase.ConstantsDSBase as constants
 
 # Module to handle systematic Variance/Bias trade-off
 

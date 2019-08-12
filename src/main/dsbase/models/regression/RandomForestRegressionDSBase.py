@@ -1,12 +1,11 @@
 import numpy as np
-import ConstantsDSBase as constants
-
-from xgboost import XGBRegressor 
+import dsbase.ConstantsDSBase as constants
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.externals import joblib
 
-description='XGradientBoostingRegression'
+description='RandomForestRegressor'
 
-class XGradientBoostingRegressionDSBaseModel:
+class RandomForestRegressionDSBaseModel:
     def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
         if (X_train is not None):
@@ -20,14 +19,8 @@ class XGradientBoostingRegressionDSBaseModel:
         self.y_train=y_train
         self.y_test=y_test
 
-        self.model = XGBRegressor(
-            n_estimators=parameters['n_estimators'],
-            max_depth=parameters['max_depth'], 
-            learningrandom_state=parameters['learning_rate'],
-            objective=parameters['objetive'],
-            n_jobs=parameters['n_jobs'],
-            gamma=parameters['gamma'])
-        
+        self.model = RandomForestRegressor(max_depth=parameters['max_depth'], n_estimators=parameters['n_estimators'], random_state=parameters['random_state'], oob_score=False)
+    
     def train(self):
         print("training model " + str(self.id) + ". " + description);
         self.model.fit(self.X_train, self.y_train)
@@ -50,20 +43,15 @@ class XGradientBoostingRegressionDSBaseModel:
     def load(self, folder_path=constants.PERSISTANCE_FOLDER):
         file_path=folder_path + constants.SEP + description + "_" + str(self.id) + constants.EXT
         print("loading model: " + file_path)
-        self.model = joblib.load(file_path)
+        self.model=joblib.load(file_path)
 
     def close(self):
         pass
 
 # Params converter function. Reference for every model
-def XGradientBoostingRegressionDSBaseModelParamsToMap(n_estimators=100, max_depth=10,learning_rate=0.1,objetive='reg:linear',n_jobs=1, gamma=0):
+def RandomForestRegressionDSBaseParamsToMap(max_depth=2, n_estimators=100, random_state=None):
     params={}
-    params['n_estimators']=n_estimators
-    params['max_depth']=max_depth
-    params['learning_rate']=learning_rate
-    params['objetive']=objetive
-    params['n_jobs']=n_jobs
-    params['gamma']=gamma
+    params['max_depth']=max_depth 
+    params['n_estimators']=n_estimators 
+    params['random_state']=random_state 
     return params
-
-

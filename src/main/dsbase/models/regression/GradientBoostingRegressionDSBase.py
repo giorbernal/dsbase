@@ -1,12 +1,11 @@
 import numpy as np
-import ConstantsDSBase as constants
-
-from sklearn.ensemble import AdaBoostClassifier 
+import dsbase.ConstantsDSBase as constants
+from sklearn.ensemble.gradient_boosting import GradientBoostingRegressor
 from sklearn.externals import joblib
 
-description='AdaBoostClassification'
+description='GradientBoostingRegressor'
 
-class AdaBoostClassificationDSBaseModel:
+class GradientBoostingRegressionDSBaseModel:
     def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
         self.id=id
         if (X_train is not None):
@@ -20,9 +19,11 @@ class AdaBoostClassificationDSBaseModel:
         self.y_train=y_train
         self.y_test=y_test
 
-        self.model = AdaBoostClassifier(n_estimators=parameters['n_estimators'], learning_rate=parameters['learning_rate'],
-                            random_state=None)
-        
+        self.model = GradientBoostingRegressor(max_depth=parameters['max_depth'],
+            n_estimators=parameters['n_estimators'],
+            random_state=parameters['random_state'], 
+            learning_rate=parameters['learning_rate'])
+    
     def train(self):
         print("training model " + str(self.id) + ". " + description);
         self.model.fit(self.X_train, self.y_train)
@@ -45,15 +46,16 @@ class AdaBoostClassificationDSBaseModel:
     def load(self, folder_path=constants.PERSISTANCE_FOLDER):
         file_path=folder_path + constants.SEP + description + "_" + str(self.id) + constants.EXT
         print("loading model: " + file_path)
-        self.model = joblib.load(file_path)
+        self.model=joblib.load(file_path)
 
     def close(self):
         pass
 
 # Params converter function. Reference for every model
-def AdaBoostClassificationDSBaseModelParamsToMap(n_estimators=50, learning_rate=1.0):
+def GradientBoostingRegressionDSBaseParamsToMap(max_depth=3, n_estimators=100, learning_rate=0.1, random_state=None):
     params={}
+    params['max_depth']=max_depth 
     params['n_estimators']=n_estimators
     params['learning_rate']=learning_rate
+    params['random_state']=random_state 
     return params
-
