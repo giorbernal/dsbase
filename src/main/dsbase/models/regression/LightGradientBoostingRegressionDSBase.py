@@ -26,7 +26,10 @@ class LightGradientBoostingRegressionDSBaseModel:
             learning_rate=parameters['learning_rate'],
             objective=parameters['objetive'],
             n_jobs=parameters['n_jobs'],
-            num_leaves=parameters['num_leaves'])
+            subsample_for_bin=parameters['subsample_for_bin'],
+            num_leaves=parameters['num_leaves'],
+            reg_alpha=parameters['reg_alpha'],
+            reg_lambda=parameters['reg_lambda'])
         
     def train(self):
         print("training model " + str(self.id) + ". " + description);
@@ -56,7 +59,7 @@ class LightGradientBoostingRegressionDSBaseModel:
         pass
 
 # Params converter function. Reference for every model
-def LightGradientBoostingRegressionDSBaseModelParamsToMap(n_estimators=100, max_depth=10,learning_rate=0.1,objetive='regression',n_jobs=1, num_leaves=31):
+def LightGradientBoostingRegressionDSBaseModelParamsToMap(n_estimators=100, max_depth=10,learning_rate=0.1,objetive='regression',n_jobs=1, num_leaves=31, subsample_for_bin=200000, reg_alpha=0, reg_lambda=0):
     params={}
     params['n_estimators']=n_estimators
     params['max_depth']=max_depth
@@ -64,4 +67,7 @@ def LightGradientBoostingRegressionDSBaseModelParamsToMap(n_estimators=100, max_
     params['objetive']=objetive
     params['n_jobs']=n_jobs
     params['num_leaves']=num_leaves
+    params['reg_alpha']=reg_alpha
+    params['reg_lambda']=reg_lambda
+    params['subsample_for_bin']=subsample_for_bin
     return params
