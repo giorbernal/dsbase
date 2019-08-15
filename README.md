@@ -1,14 +1,17 @@
 # Table of Contents
 - [DSBase Library](#dsbase-library)
 - [Data Analysis](#data-analysis)
+    + [Evaluation set](#evaluation-set)
 - [ModelDSBase](#modeldsbase)
   * [Constructor](#constructor)
   * [Methods](#methods)
   * [Example](#example)
 - [Regression Models](#regression-models)
-    + [Evaluation set](#evaluation-set)
-- [Classification Models](#classification-models)
     + [Evaluation set](#evaluation-set-1)
+- [Classification Models](#classification-models)
+    + [Evaluation set](#evaluation-set-2)
+- [Optimization](#optimization)
+     + [Evaluation set](#evaluation-set-3) 
 - [Docker](#docker)
 ***
 # DSBase Library
@@ -106,6 +109,19 @@ These are the available models for classification:
 - **Deep Neural Network Classifier**: DNNClassificationKerasDSBase.py - *keras* implementation
 ### Evaluation set
 For Evaluating and testing this models we have used [this](https://archive.ics.uci.edu/ml/datasets/Bank+Marketing) dataset
+
+# Optimization
+
+Every model must be optimized, or in other words, its parameters must be tuned to get the higher performance. To help to do this, next modules has been created:
+
+## K-Fold Validation
+the module **KFoldDSBase.py** contains a class that helps to handle K-Fold validation method with any model.
+
+## Optimization params
+On the other hand, the SearchOptimumParams.py module contains a collection of functions that helps in the task of search of optimum params of the algorithms.
+
+## Evaluation set
+To evaluate this features, we can have a look to this notebook This notebook  [src/test/Regression-House-Pricing.ipynb](https://github.com/giorbernal/dsbase/blob/master/src/test/Regression-House-Pricing.ipynb). Just as in the case of the evaluation set for analtics, we are using, and continuing with the same kaggle dataset. See the *Data Analytics* section for further datáis.
 
 # Docker
 A docker container is provided to export the computation environment anywhere. To build the image, just execute this:
