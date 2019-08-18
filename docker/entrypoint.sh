@@ -11,6 +11,8 @@ if [ $IS_DSBASE == 0 ]; then
 	echo "dsbase environment created!" >> dsbase.log
 	source activate dsbase
 	echo "inside dsbase environment!. Intalling the whole stuff ..." >> dsbase.log
+	/opt/conda/bin/conda install psycopg2 -y && \
+	echo "   ... interfacing: psycopg2 installed!" >> dsbase.log
 	/opt/conda/bin/conda install numpy pandas scikit-learn matplotlib seaborn nltk -y && \
 	echo "   ... numpy pandas scikit-learn matplotlib seaborn nltk installed!" >> dsbase.log
 	/opt/conda/bin/conda install lightgbm -y && \
