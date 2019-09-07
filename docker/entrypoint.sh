@@ -15,6 +15,8 @@ if [ $IS_DSBASE == 0 ]; then
 	echo "   ... interfacing: psycopg2 installed!" >> dsbase.log
 	/opt/conda/bin/conda install numpy pandas scikit-learn matplotlib seaborn nltk -y && \
 	echo "   ... numpy pandas scikit-learn matplotlib seaborn nltk installed!" >> dsbase.log
+	/opt/conda/bin/conda install -c conda-forge featuretools -y && \
+	echo "   ... featuretools installed!" >> dsbase.log	
 	/opt/conda/bin/conda install lightgbm -y && \
 	echo "   ... lightgbm installed!" >> dsbase.log
 	/opt/conda/bin/conda install -c conda-forge xgboost -y && \
