@@ -7,7 +7,7 @@ from sklearn.externals import joblib
 description='LightGradientBoostingRegression'
 
 class LightGradientBoostingRegressionDSBaseModel:
-    def __init__(self, id, X_train, y_train, X_test, y_test, parameters):
+    def __init__(self, id, X_train=None, y_train=None, X_test=None, y_test=None, parameters=None):
         self.id=id
         if (X_train is not None):
             print("initiating model " + str(self.id) + ". " + description);
