@@ -6,21 +6,45 @@ import featuretools as ft
 
 ############ Datasets Functions #########################################
 
+def getTrainEnriched(trainFile, itemsFile):
+  sales_df = pd.read_csv(trainFile)
+  items_df = pd.read_csv(itemsFile)
+
+  sales_df.drop(labels=['date'],inplace=True,axis=1)
+  sales_df = sales_df.reset_index()
+  items_df.drop(labels=['item_name'],inplace=True,axis=1)
+
+  dict_aux = {}
+  sales_df['ID_pair'] = sales_df[['shop_id','item_id']].apply(setPair, args=[dict_aux], axis=1)
+  sales_df = sales_df.merge(items_df)
+
+  dict_aux = {}
+  sales_df['ID_CAT_pair'] = sales_df[['shop_id','item_category_id']].apply(setPair, args=[dict_aux], axis=1)
+  return sales_df
+
 def getTestEnriched(testFile, itemsFile):
-	test_df = pd.read_csv('../datasets/predict-sales/test.csv')
-	items_df = pd.read_csv('../datasets/predict-sales/items.csv')
+	test_df = pd.read_csv(testFile)
+	items_df = pd.read_csv(itemsFile)
 
 	items_df.drop(labels=['item_name'], inplace=True, axis=1)
 
 	test_df_enriched = test_df.merge(right=items_df, on='item_id', how='left')
-	test_df_enriched['ID_pair'] = test_df_enriched[['shop_id','item_id']].apply(concatAttr, axis=1)
-	test_df_enriched['ID_CAT_pair'] = test_df_enriched[['shop_id','item_category_id']].apply(concatAttr, axis=1)
+	dict_aux = {}
+	test_df_enriched['ID_pair'] = test_df_enriched[['shop_id','item_id']].apply(setPair, args=[dict_aux], axis=1)
+	dict_aux = {}	
+	test_df_enriched['ID_CAT_pair'] = test_df_enriched[['shop_id','item_category_id']].apply(setPair, args=[dict_aux], axis=1)
 	return test_df_enriched
 
 ############ Commons functions #########################################
 
-def concatAttr(x):
-    return (str(x[0]) + '-' + str(x[1]))
+def setPair(x, d):
+    i = str(x[0]) + '-' + str(x[1])
+    try:
+        return d[i]
+    except:
+        result = i
+        d[i] = result
+        return result
 
 def getCatAgg(sales_months_df):
     es = ft.EntitySet(id="prediction_sales")
@@ -59,9 +83,63 @@ def getItemAgg(sales_months_df):
 
 ############ Training functions #########################################
 
-# TODO add getTarget for training
+def getTargetAgg(sales_result_df):
+    es = ft.EntitySet(id="target_sales")
+    es = es.entity_from_dataframe(entity_id='sales',dataframe=sales_result_df, index='index')
+    es = es.normalize_entity(base_entity_id='sales',
+                         new_entity_id='target',
+                         index='ID_pair',
+                         additional_variables=['ID_CAT_pair'])
+    feature_matrix_target, feature_defs_target = ft.dfs(entityset=es, target_entity='target')
+    target = feature_matrix_target.reset_index()
+    target_agg = target[['ID_pair','ID_CAT_pair','SUM(sales.item_cnt_day)']]
+    target_agg.columns = ['ID_pair','ID_CAT_pair','total_sales']
+    return target_agg
 
-# TODO join Traininf three parts
+def joinTrainThreeParts(ids, idsCat, target):
+    df = ids.merge(right=idsCat,on='ID_CAT_pair',how='left').merge(right=target,on='ID_pair',how='outer')
+    df.drop(labels=['ID_CAT_pair_x'], inplace=True, axis=1)
+    df.columns = ['ID_pair', 'SUM(sales.item_price)', 'SUM(sales.item_cnt_day)',
+       'STD(sales.item_price)', 'STD(sales.item_cnt_day)',
+       'MAX(sales.item_price)', 'MAX(sales.item_cnt_day)',
+       'SKEW(sales.item_price)', 'SKEW(sales.item_cnt_day)',
+       'MIN(sales.item_price)', 'MIN(sales.item_cnt_day)',
+       'MEAN(sales.item_price)', 'MEAN(sales.item_cnt_day)', 'COUNT(sales)',
+       'sum_shop_cat_sales', 'mean_shop_cat_day', 'mean_shop_cat_item_price',
+       'std_shop_cat_day', 'std_shop_cat_item_price', 'max_shop_cat_day',
+       'max_shop_cat_item_price', 'min_shop_cat_day',
+       'min_shop_cat_item_price', 'skew_shop_cat_day',
+       'skew_shop_cat_item_price', 'ID_CAT_pair', 'total_sales']
+    df_with_ids = df[~df['SUM(sales.item_price)'].isna()]
+    df_without_ids = df[df['SUM(sales.item_price)'].isna()]
+    df_without_ids.drop(labels=['sum_shop_cat_sales', 'mean_shop_cat_day', 'mean_shop_cat_item_price',
+       'std_shop_cat_day', 'std_shop_cat_item_price', 'max_shop_cat_day',
+       'max_shop_cat_item_price', 'min_shop_cat_day',
+       'min_shop_cat_item_price', 'skew_shop_cat_day',
+       'skew_shop_cat_item_price'], inplace=True, axis=1)
+    df_without_ids_enriched = df_without_ids.merge(right=idsCat, on='ID_CAT_pair', how='left')
+    df_without_ids_enriched_sorted = df_without_ids_enriched[['ID_pair','SUM(sales.item_price)','SUM(sales.item_cnt_day)','STD(sales.item_price)','STD(sales.item_cnt_day)','MAX(sales.item_price)','MAX(sales.item_cnt_day)','SKEW(sales.item_price)','SKEW(sales.item_cnt_day)','MIN(sales.item_price)','MIN(sales.item_cnt_day)','MEAN(sales.item_price)','MEAN(sales.item_cnt_day)','COUNT(sales)','sum_shop_cat_sales','mean_shop_cat_day','mean_shop_cat_item_price','std_shop_cat_day','std_shop_cat_item_price','max_shop_cat_day','max_shop_cat_item_price','min_shop_cat_day','min_shop_cat_item_price','skew_shop_cat_day','skew_shop_cat_item_price','ID_CAT_pair','total_sales']]
+    df_completed = pd.concat(objs=[df_with_ids,df_without_ids_enriched_sorted], axis=0)
+    df_completed.drop(labels=['ID_CAT_pair'], inplace=True, axis=1)
+    return df_completed
+
+def generateFeaturesForTraining(sales_df, months_feature, month_target):
+    print('features window:',months_feature,', target:',month_target)
+    sales_months_df = sales_df[sales_df['date_block_num'].isin(months_feature)]
+    sales_result_df = sales_df[sales_df['date_block_num'] == month_target]
+    sales_months_df.drop(labels=['date_block_num','shop_id','item_id','item_category_id'], inplace=True, axis=1)
+    sales_result_df.drop(labels=['date_block_num','shop_id','item_id','item_category_id'], inplace=True, axis=1)
+    
+    idsCat = getCatAgg(sales_months_df)
+    ids = getItemAgg(sales_months_df)
+    target = getTargetAgg(sales_result_df)
+    target.head(3)
+    
+    joined = joinTrainThreeParts(ids, idsCat, target)
+    
+    # Insert the slot component for correlation purposes
+    joined['slot'] = joined['COUNT(sales)'].apply(lambda x: months_feature[-1])
+    return joined
 
 ############ Evaluation functions #########################################
 
