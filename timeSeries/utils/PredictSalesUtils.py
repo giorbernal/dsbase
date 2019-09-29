@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import featuretools as ft
 
+import math
+
 ############ Datasets Functions #########################################
 
 def getTrainEnriched(trainFile, itemsFile):
@@ -80,6 +82,61 @@ def getItemAgg(sales_months_df):
     feature_matrix_ids, feature_defs_ids = ft.dfs(entityset=es, target_entity='ids')
     ids = feature_matrix_ids.reset_index()
     return ids
+
+def cleanEnsembleDataset(df, imputeTarget=False):
+    # Removing targets without evidence
+    df_cleaned = df[~(df['SUM(sales.item_cnt_day)'].isna() & df['sum_shop_cat_sales'].isna())]
+    
+    # Imputing features (na when there is not data for the item but theres is for the category)
+    df_cleaned['isThereItem'] = df_cleaned[['SUM(sales.item_cnt_day)','COUNT(sales)']].apply(lambda x: 0 if (math.isnan(x[0]) & math.isnan(x[1])) else 1, axis=1)
+    df_cleaned['SUM(sales.item_cnt_day)_imputed'] = df_cleaned['SUM(sales.item_cnt_day)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['SUM(sales.item_price)_imputed'] = df_cleaned['SUM(sales.item_price)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['MAX(sales.item_cnt_day)_imputed'] = df_cleaned['MAX(sales.item_cnt_day)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['MAX(sales.item_price)_imputed'] = df_cleaned['MAX(sales.item_price)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['MIN(sales.item_cnt_day)_imputed'] = df_cleaned['MIN(sales.item_cnt_day)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['MIN(sales.item_price)_imputed'] = df_cleaned['MIN(sales.item_price)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['MEAN(sales.item_cnt_day)_imputed'] = df_cleaned['MEAN(sales.item_cnt_day)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['MEAN(sales.item_price)_imputed'] = df_cleaned['MEAN(sales.item_price)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['COUNT(sales)_imputed'] = df_cleaned['COUNT(sales)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    
+    # Imputing features (na in case of unity)
+    df_cleaned['onlyOneItem'] = df_cleaned[['SUM(sales.item_cnt_day)','STD(sales.item_cnt_day)']].apply(lambda x: 1 if (~math.isnan(x[0]) & math.isnan(x[1])) else 0, axis=1)
+    df_cleaned['STD(sales.item_cnt_day)_imputed'] = df_cleaned['STD(sales.item_cnt_day)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['STD(sales.item_price)_imputed'] = df_cleaned['STD(sales.item_price)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['SKEW(sales.item_cnt_day)_imputed'] = df_cleaned['SKEW(sales.item_cnt_day)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['SKEW(sales.item_price)_imputed'] = df_cleaned['SKEW(sales.item_cnt_day)'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['onlyOneCat'] = df_cleaned[['mean_shop_cat_day','skew_shop_cat_day']].apply(lambda x: 1 if (~math.isnan(x[0]) & math.isnan(x[1])) else 0, axis=1)
+    df_cleaned['std_shop_cat_day_imputed'] = df_cleaned['std_shop_cat_day'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['std_shop_cat_item_price_imputed'] = df_cleaned['std_shop_cat_item_price'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['skew_shop_cat_day_imputed'] = df_cleaned['skew_shop_cat_day'].apply(lambda x: 0 if (math.isnan(x)) else x)
+    df_cleaned['skew_shop_cat_item_price_imputed'] = df_cleaned['skew_shop_cat_item_price'].apply(lambda x: 0 if (math.isnan(x)) else x)
+
+    # remove old variables
+    df_cleaned.drop(labels=['SUM(sales.item_cnt_day)','SUM(sales.item_price)',
+                            'MAX(sales.item_cnt_day)','MAX(sales.item_price)',
+                            'MIN(sales.item_cnt_day)','MIN(sales.item_price)',
+                            'MEAN(sales.item_cnt_day)','MEAN(sales.item_price)',
+                            'COUNT(sales)'
+                           ], inplace=True, axis=1)  
+    df_cleaned.drop(labels=['STD(sales.item_cnt_day)','STD(sales.item_price)',
+                            'SKEW(sales.item_cnt_day)','SKEW(sales.item_price)',
+                            'std_shop_cat_day','std_shop_cat_item_price',
+                            'skew_shop_cat_day','skew_shop_cat_item_price'
+                           ], inplace=True, axis=1)
+    
+    # imputing target
+    if (imputeTarget):
+      df_cleaned['target_imputed'] = df_cleaned['total_sales'].apply(lambda x: 0 if (math.isnan(x)) else x)
+      df_cleaned.drop(labels=['total_sales'], inplace=True, axis=1)
+    
+    return df_cleaned
+
+def cleanStackingDataset(df,rowsToImputate):
+    for rti in rowsToImputate:
+        df[rti + '_imputated'] = df[rti].apply(lambda x: 0 if math.isnan(x) else x)
+        df[rti + '_na_indicator'] = df[rti].apply(lambda x: 1 if math.isnan(x) else 0)
+    df.drop(labels=rowsToImputate, inplace=True, axis=1)
+    return df
 
 ############ Training functions #########################################
 
