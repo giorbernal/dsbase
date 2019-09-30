@@ -13,9 +13,6 @@
     + [Evaluation set](#evaluation-set-2)
 - [Optimization](#optimization)
      + [Evaluation set](#evaluation-set-3) 
-- [Time Series](#time-series)
-    + [Evaluation set](#evaluation-set-4)
-    + [Next Step](#next-step-1)
 - [Docker](#docker)
 ***
 # DSBase Library
@@ -131,31 +128,6 @@ On the other hand, the SearchOptimumParams.py module contains a collection of fu
 
 ## Evaluation set
 To evaluate this features, we can have a look to this notebook This notebook  [src/test/Regression-House-Pricing.ipynb](https://github.com/giorbernal/dsbase/blob/master/src/test/Regression-House-Pricing.ipynb). Just as in the case of the evaluation set for analtics, we are using, and continuing with the same kaggle dataset. See the *Data Analytics* section for further datáis.
-
-# Time Series
-As an additional exercise, we have an example of how to work with timeseries with the library **FeatureTools**. Here we can see following points:
-
-* Time Series basic visualization.
-* Dataset Generation with **FeatureTools** Library and cleaning.
-* ML model in this context with LightGB
-
-## Evaluation Set
-For evaluating and testing this strategy we have used  [this](https://www.kaggle.com/c/competitive-data-science-predict-future-sales/data)  kaggle dataset. To download the data do next (*):
-
-```
->> cd datasets
->> mkdir prediction-sales
->> cd prediction-sales
->> kaggle competitions download -c competitive-data-science-predict-future-sales
-
-```
-
-(*): Kaggle client must be installed to follow this method
-
-This notebooks  [timeSeries/TimeSeries-Predict-Sales-GenDataSet.ipynb](https://github.com/giorbernal/dsbase/blob/master/timeSeries/TimeSeries-Predict-Sales-GenDataSet.ipynb) and [timeSeries/TimeSeries-Predict-Sales-Regression.ipynb](https://github.com/giorbernal/dsbase/blob/master/timeSeries/TimeSeries-Predict-Sales-Regression.ipynb) show how to follow this strategy.
-
-## Next Step
-Follow a Ensemble/Stacking strategy with different time slots covering almost the whole time space.
 
 # Docker
 A docker container is provided to export the computation environment anywhere. To build the image, just execute this:
